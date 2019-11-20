@@ -7,6 +7,8 @@
         var userInfo = null;
         var authToken = getQueryToken() || getQueryToken();
         if(authToken){
+            localStorage.setItem('phonecasetoken', authToken);
+
             $.ajax({
                 method: 'GET',
                 url: "https://phonecase.auth.ap-northeast-2.amazoncognito.com/oauth2/userInfo",
