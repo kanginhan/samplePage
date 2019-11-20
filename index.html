@@ -4,72 +4,48 @@
 
 <body>
     <script>
-        window.fbAsyncInit = function () {
-            FB.init({
-                appId: '810970136001571',
-                cookie: true,
-                xfbml: true,
-                version: 'v5.0'
-            });
+        var userInfo = null;
+        var authToken = getQueryToken() || getQueryToken();
+        if(authToken){
+            $.ajax({
+                method: 'GET',
+                url: "https://phonecase.auth.ap-northeast-2.amazoncognito.com/oauth2/userInfo",
+                headers: {
+                    "Accept": "*/*",
+                    Authorization: 'Bearer ' + authToken
+                },
+                success: function (result) {
+                    userInfo = result;
+                    alert(JSON.stringify(userInfo));
+                },
+                error: function ajaxError(jqXHR, textStatus, errorThrown) {
 
-            FB.AppEvents.logPageView();
-            checkLoginState();
-        };
-
-        (function (d, s, id) {
-            var js, fjs = d.getElementsByTagName(s)[0];
-            if (d.getElementById(id)) { return; }
-            js = d.createElement(s); js.id = id;
-            js.src = "https://connect.facebook.net/en_US/sdk.js";
-            fjs.parentNode.insertBefore(js, fjs);
-        }(document, 'script', 'facebook-jssdk'));
-
-        function checkLoginState() {
-            FB.getLoginStatus(function(response) {
-                statusChangeCallback(response);
+                }
             });
         }
 
-        function statusChangeCallback(response) {
-            console.log('statusChangeCallback');
-            console.log(response);
-
-            if (response.status === 'connected') {
-                awsUser(response);
-            } else if (response.status === 'not_authorized') {
-                // document.getElementById('status').innerHTML = 'Please log ' + 'into this app.';
-            } else {
-                // document.getElementById('status').innerHTML = 'Please log ' + 'into Facebook.';
-            }
+        //url 해쉬 토큰 조회
+        function getQueryToken(){
+            var hash = new URLSearchParams(window.location.hash);
+            return hash.get('access_token');
+        }
+        
+        //저장된 토큰 조회
+        function getStoredToken(){
+            return localStorage.getItem('phonecasetoken');
         }
 
-        function awsUser() {
-            var cognitoUser = null;
-            if (cognitoUser == null) {
-                var data = {
-                    UserPoolId: 'ap-northeast-2_NSjYDxym5',
-                    ClientId: 'gi18c058r50gup2clds7dk93q'
-                };
-                var userPool = new AmazonCognitoIdentity.CognitoUserPool(data);
-                cognitoUser = userPool.getCurrentUser();
-            }
-            if (cognitoUser != null) {
-                cognitoUser.getSession(function (err, session) {
-                    if (err) {
-                        alert(err);
-                        return;
-                    }
-                    console.log('session validity: ' + session.isValid());
-                });
-            }
-        }
         function callApi() {
+            if(!authToken){
+                return;
+            }
+
             $.ajax({
                 method: 'POST',
                 url: "https://aaav0dws6a.execute-api.ap-northeast-2.amazonaws.com/beta/getlistprod",
                 headers: {
                     "Accept": "*/*",
-                    //Authorization: authToken
+                    Authorization: 'Bearer ' + authToken
                 },
                 data: JSON.stringify({
                     "Category1": "케이스",
@@ -86,7 +62,7 @@
                 }),
                 contentType: 'application/json',
                 success: function (result) {
-                    alert(result);
+                    alert(JSON.stringify(reuslt));
                 },
                 error: function ajaxError(jqXHR, textStatus, errorThrown) {
 
@@ -98,10 +74,8 @@
     <script src="amazon-cognito-identity.min.js"></script>
     <script src="aws-sdk.min.js"></script>
     <div>
-        <a href="https://phonecase.auth.ap-northeast-2.amazoncognito.com/login?response_type=code&client_id=gi18c058r50gup2clds7dk93q&redirect_uri=https://kanginhan.github.io/samplePage">로그인</a>
+        <a href="https://phonecase.auth.ap-northeast-2.amazoncognito.com/login?response_type=token&client_id=gi18c058r50gup2clds7dk93q&redirect_uri=https://kanginhan.github.io/samplePage">로그인</a>
     </div>
-    <div>샘플</div>
-    <button onclick="awsUser()">사용자 확인</button>
     <button onclick="callApi()">api호출</button>
     
     <fb:login-button scope="public_profile,email" onlogin="checkLoginState();"></fb:login-button>
