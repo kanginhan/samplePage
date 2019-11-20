@@ -3,6 +3,9 @@
 <head></head>
 
 <body>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="amazon-cognito-identity.min.js"></script>
+    <script src="aws-sdk.min.js"></script>
     <script>
         var userInfo = null;
         var authToken = getQueryToken() || getStoredToken();
@@ -72,15 +75,11 @@
             });
         }
     </script>
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="amazon-cognito-identity.min.js"></script>
-    <script src="aws-sdk.min.js"></script>
+    
     <div>
         <a href="https://phonecase.auth.ap-northeast-2.amazoncognito.com/login?response_type=token&client_id=gi18c058r50gup2clds7dk93q&redirect_uri=https://kanginhan.github.io/samplePage">로그인</a>
     </div>
     <button onclick="callApi()">api호출</button>
-    
-    <fb:login-button scope="public_profile,email" onlogin="checkLoginState();"></fb:login-button>
 </body>
 
 </html>
