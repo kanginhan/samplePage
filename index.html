@@ -25,11 +25,26 @@
                 success: function (result) {
                     userInfo = result;
                     alert(JSON.stringify(userInfo));
+
+                    getUser(userInfo.username);
                 },
                 error: function ajaxError(jqXHR, textStatus, errorThrown) {
 
                 }
             });
+        }
+
+        function getUser(username){
+            var poolData = { 
+                UserPoolId : 'ap-northeast-2_NSjYDxym5',
+                ClientId : 'gi18c058r50gup2clds7dk93q'
+            };
+            var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+            var userData = {
+                Username : username,
+                Pool : userPool
+            };
+            var cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
         }
 
         //url 해쉬 토큰 조회
