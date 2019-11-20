@@ -4,12 +4,38 @@
 
 <body>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="amazon-cognito-identity.min.js"></script>
+	<script src="aws-sdk.min.js"></script>
     <div>
         <a href="https://phonecase.auth.ap-northeast-2.amazoncognito.com/login?response_type=token&client_id=gi18c058r50gup2clds7dk93q&redirect_uri=https://kanginhan.github.io/samplePage">로그인</a>
     </div>
     <div>샘플</div>
+    <button onclick="awsUser()">사용자 확인</button>
     <button onclick="callApi()">api호출</button>
     <script>
+        var cognitoUser = null;
+
+        function awsUser(){
+            if(cognitoUser == null){
+                var data = { 
+                    UserPoolId : 'ap-northeast-2_NSjYDxym5',
+                    ClientId : 'gi18c058r50gup2clds7dk93q'
+                };
+                var userPool = new AmazonCognitoIdentity.CognitoUserPool(data);
+                cognitoUser = userPool.getCurrentUser();
+            }
+
+            if (cognitoUser != null) {
+                cognitoUser.getSession(function(err, session) {
+                    if (err) {
+                        alert(err);
+                        return;
+                    }
+                    console.log('session validity: ' + session.isValid());
+                });
+            }
+        }
+
         function callApi(){
             $.ajax({
             method: 'POST',
