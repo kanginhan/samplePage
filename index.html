@@ -8,43 +8,29 @@
     <script src="aws-sdk.min.js"></script>
     <script>
         var userInfo = null;
-        var authToken = getQueryToken("access_token") || getStoredToken("access_token");
+        var accessToken = getQueryToken("access_token") || getStoredToken("access_token");
         var idToken = getQueryToken("#id_token") || getStoredToken("#id_token");
-
-        if(authToken && idToken){
-            localStorage.setItem('access_token', authToken);
+        
+        if(accessToken && idToken){
+            localStorage.setItem('access_token', accessToken);
             localStorage.setItem('#id_token', idToken);
 
-            $.ajax({
-                method: 'GET',
-                url: "https://phonecase.auth.ap-northeast-2.amazoncognito.com/oauth2/userInfo",
-                headers: {
-                    "Accept": "*/*",
-                    Authorization: 'Bearer ' + authToken
-                },
-                success: function (result) {
-                    userInfo = result;
-                    alert(JSON.stringify(userInfo));
-
-                    getUser(userInfo.username);
-                },
-                error: function ajaxError(jqXHR, textStatus, errorThrown) {
-
-                }
-            });
+            getUser(idToken);
         }
 
-        function getUser(username){
-            var poolData = { 
-                UserPoolId : 'ap-northeast-2_NSjYDxym5',
-                ClientId : 'gi18c058r50gup2clds7dk93q'
-            };
-            var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
-            var userData = {
-                Username : username,
-                Pool : userPool
-            };
-            var cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+        function getUser(token){
+            var param = {
+                AccessToken: token
+            }
+            var provider = new AWS.CognitoIdentityServiceProvider();
+            provider.getUser(param, function (err, data) {
+                if(err){
+                    //error
+                } else {
+                    //success
+                    userInfo = data;
+                }
+            })
         }
 
         //url 해쉬 토큰 조회
