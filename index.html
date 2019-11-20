@@ -14,9 +14,10 @@
             $.ajax({
             method: 'POST',
             url: "http://aaav0dws6a.execute-api.ap-northeast-2.amazonaws.com/beta/getlistprod",
-            // headers: {
-            //     Authorization: authToken
-            // },
+            headers: {
+                "Accept": "*/*",
+                //Authorization: authToken
+            },
             data: JSON.stringify({
                 "Category1": "케이스",
                 "Category2": "다이어리",
