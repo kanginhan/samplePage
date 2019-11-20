@@ -14,14 +14,16 @@
         if(accessToken && idToken){
             localStorage.setItem('access_token', accessToken);
             localStorage.setItem('#id_token', idToken);
-
-            getUser(idToken);
+            getUser();
         }
 
-        function getUser(token){
+        //사용자정보 조회
+        function getUser(){
             var param = {
-                AccessToken: token
+                AccessToken: accessToken
             }
+
+            AWS.config.region = 'ap-northeast-2';
             var provider = new AWS.CognitoIdentityServiceProvider();
             provider.getUser(param, function (err, data) {
                 if(err){
