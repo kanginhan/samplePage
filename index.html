@@ -8,9 +8,12 @@
     <script src="aws-sdk.min.js"></script>
     <script>
         var userInfo = null;
-        var authToken = getQueryToken() || getStoredToken();
-        if(authToken){
-            localStorage.setItem('phonecasetoken', authToken);
+        var authToken = getQueryToken("access_token") || getStoredToken("access_token");
+        var idToken = getQueryToken("#id_token") || getStoredToken("#id_token");
+
+        if(authToken && idToken){
+            localStorage.setItem('access_token', authToken);
+            localStorage.setItem('#id_token', idToken);
 
             $.ajax({
                 method: 'GET',
@@ -30,14 +33,14 @@
         }
 
         //url 해쉬 토큰 조회
-        function getQueryToken(){
+        function getQueryToken(key){
             var hash = new URLSearchParams(window.location.hash);
-            return hash.get('access_token');
+            return hash.get(key);
         }
         
         //저장된 토큰 조회
-        function getStoredToken(){
-            return localStorage.getItem('phonecasetoken');
+        function getStoredToken(key){
+            return localStorage.getItem(key);
         }
 
         function callApi() {
@@ -50,7 +53,7 @@
                 url: "https://aaav0dws6a.execute-api.ap-northeast-2.amazonaws.com/beta/getlistprod",
                 headers: {
                     "Accept": "*/*",
-                    Authorization: 'Bearer ' + authToken
+                    Authorization: 'Bearer ' + idToken
                 },
                 data: JSON.stringify({
                     "Category1": "케이스",
@@ -80,6 +83,7 @@
         <a href="https://phonecase.auth.ap-northeast-2.amazoncognito.com/login?response_type=token&client_id=gi18c058r50gup2clds7dk93q&redirect_uri=https://kanginhan.github.io/samplePage">로그인</a>
     </div>
     <button onclick="callApi()">api호출</button>
+    
 </body>
 
 </html>
