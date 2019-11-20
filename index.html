@@ -5,7 +5,7 @@
 <body>
     <script>
         var userInfo = null;
-        var authToken = getQueryToken() || getQueryToken();
+        var authToken = getQueryToken() || getStoredToken();
         if(authToken){
             localStorage.setItem('phonecasetoken', authToken);
 
