@@ -3,28 +3,75 @@
 <head></head>
 
 <body>
+    <script>
+        window.fbAsyncInit = function () {
+            FB.init({
+                appId: '810970136001571',
+                cookie: true,
+                xfbml: true,
+                version: 'v5.0'
+            });
+
+            FB.AppEvents.logPageView();
+
+        };
+
+        (function (d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) { return; }
+            js = d.createElement(s); js.id = id;
+            js.src = "https://connect.facebook.net/en_US/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+    </script>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="amazon-cognito-identity.min.js"></script>
-	<script src="aws-sdk.min.js"></script>
+    <script src="aws-sdk.min.js"></script>
     <div>
         <a href="https://phonecase.auth.ap-northeast-2.amazoncognito.com/login?response_type=code&client_id=gi18c058r50gup2clds7dk93q&redirect_uri=https://kanginhan.github.io/samplePage">로그인</a>
     </div>
     <div>샘플</div>
     <button onclick="awsUser()">사용자 확인</button>
     <button onclick="callApi()">api호출</button>
+    
+    <fb:login-button scope="public_profile,email" onlogin="checkLoginState();"></fb:login-button>
+
     <script>
-        var cognitoUser = null;
-        function awsUser(){
-            if(cognitoUser == null){
-                var data = { 
-                    UserPoolId : 'ap-northeast-2_NSjYDxym5',
-                    ClientId : 'gi18c058r50gup2clds7dk93q'
+        checkLoginState();
+
+        function checkLoginState() {
+            FB.getLoginStatus(function(response) {
+                statusChangeCallback(response);
+            });
+        }
+
+        function statusChangeCallback(response) {
+            console.log('statusChangeCallback');
+            console.log(response);
+
+            if (response.status === 'connected') {
+                awsUser(response);
+            } else if (response.status === 'not_authorized') {
+                document.getElementById('status').innerHTML = 'Please log ' + 'into this app.';
+            } else {
+                document.getElementById('status').innerHTML = 'Please log ' + 'into Facebook.';
+            }
+        }
+
+        function awsUser(response) {
+            var token = response.authResponse.accessToken;
+
+            var cognitoUser = null;
+            if (cognitoUser == null) {
+                var data = {
+                    UserPoolId: 'ap-northeast-2_NSjYDxym5',
+                    ClientId: 'gi18c058r50gup2clds7dk93q'
                 };
                 var userPool = new AmazonCognitoIdentity.CognitoUserPool(data);
                 cognitoUser = userPool.getCurrentUser();
             }
             if (cognitoUser != null) {
-                cognitoUser.getSession(function(err, session) {
+                cognitoUser.getSession(function (err, session) {
                     if (err) {
                         alert(err);
                         return;
@@ -33,35 +80,35 @@
                 });
             }
         }
-        function callApi(){
+        function callApi() {
             $.ajax({
-            method: 'POST',
-            url: "https://aaav0dws6a.execute-api.ap-northeast-2.amazonaws.com/beta/getlistprod",
-            headers: {
-                "Accept": "*/*",
-                //Authorization: authToken
-            },
-            data: JSON.stringify({
-                "Category1": "케이스",
-                "Category2": "다이어리",
-                "Maker": "삼성",
-                "Model": "SM-A805F",
-                "Name": "모란카노 카노 다이어리",
-                "Phone": "갤럭시A80",
-                "Price": {
-                "start": 0,
-                "end": 99990
+                method: 'POST',
+                url: "https://aaav0dws6a.execute-api.ap-northeast-2.amazonaws.com/beta/getlistprod",
+                headers: {
+                    "Accept": "*/*",
+                    //Authorization: authToken
                 },
-                "Keyword": "갤럭"
-            }),
-            contentType: 'application/json',
-            success: function(result){
-                alert(result);
-            },
-            error: function ajaxError(jqXHR, textStatus, errorThrown) {
-                
-            }
-        });
+                data: JSON.stringify({
+                    "Category1": "케이스",
+                    "Category2": "다이어리",
+                    "Maker": "삼성",
+                    "Model": "SM-A805F",
+                    "Name": "모란카노 카노 다이어리",
+                    "Phone": "갤럭시A80",
+                    "Price": {
+                        "start": 0,
+                        "end": 99990
+                    },
+                    "Keyword": "갤럭"
+                }),
+                contentType: 'application/json',
+                success: function (result) {
+                    alert(result);
+                },
+                error: function ajaxError(jqXHR, textStatus, errorThrown) {
+
+                }
+            });
         }
     </script>
 </body>
