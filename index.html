@@ -12,6 +12,15 @@
         <a id="login" href="https://phonecase.auth.ap-northeast-2.amazoncognito.com/login?response_type=token&client_id=gi18c058r50gup2clds7dk93q&redirect_uri=https://kanginhan.github.io/samplePage">로그인</a>
         <a id="logout" href="javascript:logout()">로그아웃</a>
     </div>
+
+    <div>
+        <label>id</label>
+        <input type="text" id="id" disabled/>
+    </div>
+    <div>
+        <label>name</label>
+        <input type="text" id="name" disabled/>
+    </div>
     <div>
         <label>phone</label>
         <input type="text" id="phone"/>
@@ -90,12 +99,21 @@
                         $('#login').hide();
                         userInfo = data;
 
-                        //핸드폰번호 속성입력
+                        //id
+                        $('#id').val(userInfo.Username);
+
+                        //이름
+                        var nameAttr = userInfo.UserAttributes.find(x => x.Name == "name");
+                        if (nameAttr){
+                            $('#name').val(nameAttr.Value);
+                        }
+
+                        //핸드폰
                         var phoneAttr = userInfo.UserAttributes.find(x => x.Name == "phone_number");
                         if (phoneAttr){
                             $('#phone').val(phoneAttr.Value);
                         }
-                        //주소 속성입력
+                        //주소
                         var addressAttr = userInfo.UserAttributes.find(x => x.Name == "address");
                         if (addressAttr){
                             $('#address').val(addressAttr.Value);
