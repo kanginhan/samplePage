@@ -10,7 +10,7 @@
     
     <div>
         <a id="login" href="https://phonecase.auth.ap-northeast-2.amazoncognito.com/login?response_type=token&client_id=gi18c058r50gup2clds7dk93q&redirect_uri=https://kanginhan.github.io/samplePage">로그인</a>
-        <a id="logout" href="https://phonecase.auth.ap-northeast-2.amazoncognito.com/logout?client_id=gi18c058r50gup2clds7dk93q&logout_uri=https://kanginhan.github.io/samplePage">로그아웃</a>
+        <a id="logout" href="javascript:logout()">로그아웃</a>
     </div>
     <button onclick="callApi()">api호출</button>
     <div>
@@ -37,6 +37,13 @@
                 getUser();
             }else{
                 $('#logout').hide();
+            }
+
+            //로그아웃
+            function logout(){
+                localStorage.removeItem('access_token');
+                localStorage.removeItem('#id_token');
+                location.href = "https://phonecase.auth.ap-northeast-2.amazoncognito.com/logout?client_id=gi18c058r50gup2clds7dk93q&logout_uri=https://kanginhan.github.io/samplePage";
             }
 
             //사용자속성 저장
