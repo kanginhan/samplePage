@@ -17,6 +17,10 @@
         <label>phone</label>
         <input type="text" id="phone"/>
     </div>
+    <div>
+        <label>address</label>
+        <input type="text" id="address"/>
+    </div>
     <button onclick="userAttrSave()">속성 저장</button>
 
     <script>
@@ -43,11 +47,15 @@
                 }
 
                 var param = {
-                    "AccessToken": accessToken,
-                    "UserAttributes": [ 
+                    AccessToken: accessToken,
+                    UserAttributes: [ 
                         { 
-                            "Name": "phone_number",
-                            "Value":  $('#phone').val()
+                            Name: "phone_number",
+                            Value:  $('#phone').val()
+                        },
+                        { 
+                            Name: "address",
+                            Value:  $('#address').val()
                         }
                     ]
                 }
@@ -75,10 +83,15 @@
                         $('#login').hide();
                         userInfo = data;
 
-                        //주소, 핸드폰번호 속성입력
+                        //핸드폰번호 속성입력
                         var phoneAttr = userInfo.UserAttributes.find(x => x.Name == "phone_number");
                         if (phoneAttr){
                             $('#phone').val(phoneAttr.Value);
+                        }
+                        //주소 속성입력
+                        var addressAttr = userInfo.UserAttributes.find(x => x.Name == "address");
+                        if (addressAttr){
+                            $('#address').val(addressAttr.Value);
                         }
                     }
                 })
