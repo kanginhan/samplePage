@@ -6,87 +6,124 @@
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="amazon-cognito-identity.min.js"></script>
     <script src="aws-sdk.min.js"></script>
-    <script>
-        var userInfo = null;
-        var accessToken = getQueryToken("access_token") || getStoredToken("access_token");
-        var idToken = getQueryToken("#id_token") || getStoredToken("#id_token");
-        
-        if(accessToken && idToken){
-            localStorage.setItem('access_token', accessToken);
-            localStorage.setItem('#id_token', idToken);
-            getUser();
-        }
-
-        //사용자정보 조회
-        function getUser(){
-            var param = {
-                AccessToken: accessToken
-            }
-
-            AWS.config.region = 'ap-northeast-2';
-            var provider = new AWS.CognitoIdentityServiceProvider();
-            provider.getUser(param, function (err, data) {
-                if(err){
-                    //error
-                } else {
-                    //success
-                    userInfo = data;
-                }
-            })
-        }
-
-        //url 해쉬 토큰 조회
-        function getQueryToken(key){
-            var hash = new URLSearchParams(window.location.hash);
-            return hash.get(key);
-        }
-        
-        //저장된 토큰 조회
-        function getStoredToken(key){
-            return localStorage.getItem(key);
-        }
-
-        function callApi() {
-            if(!authToken){
-                return;
-            }
-
-            $.ajax({
-                method: 'POST',
-                url: "https://aaav0dws6a.execute-api.ap-northeast-2.amazonaws.com/beta/getlistprod",
-                headers: {
-                    "Accept": "*/*",
-                    Authorization: 'Bearer ' + idToken
-                },
-                data: JSON.stringify({
-                    "Category1": "케이스",
-                    "Category2": "다이어리",
-                    "Maker": "삼성",
-                    "Model": "SM-A805F",
-                    "Name": "모란카노 카노 다이어리",
-                    "Phone": "갤럭시A80",
-                    "Price": {
-                        "start": 0,
-                        "end": 99990
-                    },
-                    "Keyword": "갤럭"
-                }),
-                contentType: 'application/json',
-                success: function (result) {
-                    alert(JSON.stringify(result));
-                },
-                error: function ajaxError(jqXHR, textStatus, errorThrown) {
-
-                }
-            });
-        }
-    </script>
+    
     
     <div>
         <a href="https://phonecase.auth.ap-northeast-2.amazoncognito.com/login?response_type=token&client_id=gi18c058r50gup2clds7dk93q&redirect_uri=https://kanginhan.github.io/samplePage">로그인</a>
     </div>
     <button onclick="callApi()">api호출</button>
+    <div>
+        <label>phone</label>
+        <input type="text" id="phone"/>
+    </div>
+    <button onclick="userAttrSave()">속성 저장</button>
+
+    <script>
+            AWS.config.region = 'ap-northeast-2';
+
+            var userInfo = null;
+            var provider = new AWS.CognitoIdentityServiceProvider();
+            var accessToken = getQueryToken("access_token") || getStoredToken("access_token");
+            var idToken = getQueryToken("#id_token") || getStoredToken("#id_token");
+
+            if(accessToken && idToken){
+                localStorage.setItem('access_token', accessToken);
+                localStorage.setItem('#id_token', idToken);
+                getUser();
+            }
+
+            //사용자속성 저장
+            function userAttrSave(){
+                if(!userInfo){
+                    alert('로그인 해주세요');
+                    return;
+                }
+
+                var param = {
+                    "AccessToken": accessToken,
+                    "UserAttributes": [ 
+                        { 
+                            "Name": "phone_number",
+                            "Value":  $('#phone').val()
+                        }
+                    ]
+                }
+                provider.UpdateUserAttributes(param, function(err, data){
+                    if(err){
+                        //error
+                    } else {
+                        alert('속성 저장 성공');
+                    }
+                });
+            }
     
+            //사용자정보 조회
+            function getUser(){
+                var param = {
+                    AccessToken: accessToken
+                }
+                provider.getUser(param, function (err, data) {
+                    if(err){
+                        //error
+                    } else {
+                        //success
+                        userInfo = data;
+
+                        //주소, 핸드폰번호 속성입력
+                        var phoneAttr = userInfo.UserAttributes.find(x => x.Name == "phone_number");
+                        if (phoneAttr){
+                            $('#phone').val(phoneAttr.Value);
+                        }
+                    }
+                })
+            }
+    
+            //url 해쉬 토큰 조회
+            function getQueryToken(key){
+                var hash = new URLSearchParams(window.location.hash);
+                return hash.get(key);
+            }
+            
+            //저장된 토큰 조회
+            function getStoredToken(key){
+                return localStorage.getItem(key);
+            }
+    
+            function callApi() {
+                if(!authToken){
+                    return;
+                }
+    
+                $.ajax({
+                    method: 'POST',
+                    url: "https://aaav0dws6a.execute-api.ap-northeast-2.amazonaws.com/beta/getlistprod",
+                    headers: {
+                        "Accept": "*/*",
+                        Authorization: 'Bearer ' + idToken
+                    },
+                    data: JSON.stringify({
+                        "Category1": "케이스",
+                        "Category2": "다이어리",
+                        "Maker": "삼성",
+                        "Model": "SM-A805F",
+                        "Name": "모란카노 카노 다이어리",
+                        "Phone": "갤럭시A80",
+                        "Price": {
+                            "start": 0,
+                            "end": 99990
+                        },
+                        "Keyword": "갤럭"
+                    }),
+                    contentType: 'application/json',
+                    success: function (result) {
+                        alert(JSON.stringify(result));
+                    },
+                    error: function ajaxError(jqXHR, textStatus, errorThrown) {
+    
+                    }
+                });
+            }
+        </script>
 </body>
 
 </html>
