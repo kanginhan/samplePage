@@ -29,11 +29,11 @@
             var userInfo = null;
             var provider = new AWS.CognitoIdentityServiceProvider();
             var accessToken = getQueryToken("access_token") || getStoredToken("access_token");
-            var idToken = getQueryToken("#id_token") || getStoredToken("#id_token");
+            var idToken = getQueryToken("id_token") || getStoredToken("id_token");
 
             if(accessToken && idToken){
                 localStorage.setItem('access_token', accessToken);
-                localStorage.setItem('#id_token', idToken);
+                localStorage.setItem('id_token', idToken);
                 getUser();
             }else{
                 $('#logout').hide();
@@ -42,7 +42,7 @@
             //로그아웃
             function logout(){
                 localStorage.removeItem('access_token');
-                localStorage.removeItem('#id_token');
+                localStorage.removeItem('id_token');
                 location.href = "https://phonecase.auth.ap-northeast-2.amazoncognito.com/logout?client_id=gi18c058r50gup2clds7dk93q&logout_uri=https://kanginhan.github.io/samplePage";
             }
 
@@ -107,7 +107,7 @@
             //url 해쉬 토큰 조회
             function getQueryToken(key){
                 var hash = new URLSearchParams(window.location.hash);
-                return hash.get(key);
+                return hash.get(key) || hash.get('#' + key);
             }
             
             //저장된 토큰 조회
