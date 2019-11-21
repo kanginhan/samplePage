@@ -12,7 +12,6 @@
         <a id="login" href="https://phonecase.auth.ap-northeast-2.amazoncognito.com/login?response_type=token&client_id=gi18c058r50gup2clds7dk93q&redirect_uri=https://kanginhan.github.io/samplePage">로그인</a>
         <a id="logout" href="javascript:logout()">로그아웃</a>
     </div>
-    <button onclick="callApi()">api호출</button>
     <div>
         <label>phone</label>
         <input type="text" id="phone"/>
@@ -22,6 +21,7 @@
         <input type="text" id="address"/>
     </div>
     <button onclick="userAttrSave()">속성 저장</button>
+    <button onclick="callPublicApi()">공개 api호출</button>
 
     <script>
             AWS.config.region = 'ap-northeast-2';
@@ -115,17 +115,13 @@
                 return localStorage.getItem(key);
             }
     
-            function callApi() {
-                if(!authToken){
-                    return;
-                }
-    
+            function callPublicApi() {
                 $.ajax({
                     method: 'POST',
                     url: "https://aaav0dws6a.execute-api.ap-northeast-2.amazonaws.com/beta/getlistprod",
                     headers: {
                         "Accept": "*/*",
-                        Authorization: 'Bearer ' + idToken
+                        // Authorization: 'Bearer ' + idToken
                     },
                     data: JSON.stringify({
                         "Category1": "케이스",
