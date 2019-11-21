@@ -9,7 +9,8 @@
     
     
     <div>
-        <a href="https://phonecase.auth.ap-northeast-2.amazoncognito.com/login?response_type=token&client_id=gi18c058r50gup2clds7dk93q&redirect_uri=https://kanginhan.github.io/samplePage">로그인</a>
+        <a id="login" href="https://phonecase.auth.ap-northeast-2.amazoncognito.com/login?response_type=token&client_id=gi18c058r50gup2clds7dk93q&redirect_uri=https://kanginhan.github.io/samplePage">로그인</a>
+        <a id="logout" href="https://phonecase.auth.ap-northeast-2.amazoncognito.com/login?client_id=gi18c058r50gup2clds7dk93q&logout_uri=https://kanginhan.github.io/samplePage">로그아웃</a>
     </div>
     <button onclick="callApi()">api호출</button>
     <div>
@@ -30,6 +31,8 @@
                 localStorage.setItem('access_token', accessToken);
                 localStorage.setItem('#id_token', idToken);
                 getUser();
+            }else{
+                $('#logout').hide();
             }
 
             //사용자속성 저장
@@ -66,8 +69,10 @@
                 provider.getUser(param, function (err, data) {
                     if(err){
                         //error
+                        $('#logout').hide();
                     } else {
                         //success
+                        $('#login').hide();
                         userInfo = data;
 
                         //주소, 핸드폰번호 속성입력
