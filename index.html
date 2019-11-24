@@ -8,6 +8,7 @@
     <script src="aws-sdk.min.js"></script>
     <script src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"></script>
     
+
     <h3>상품정보</h3>
     <button onclick="callPublicApi()">공개 api호출</button>
 
@@ -43,16 +44,13 @@
     <br/>
     <br/>
     <h3>주문</h3>
-
-
-
-
-    
     <button onclick="requestPay()">결제 test</button>
 
+
+
     <script>
-            var IMP = window.IMP; // 생략해도 괜찮습니다.
-            IMP.init("imp83561466"); // "imp00000000" 대신 발급받은 "가맹점 식별코드"를 사용합니다.
+            var IMP = window.IMP;
+            IMP.init("imp83561466");
 
             AWS.config.region = 'ap-northeast-2';
 
@@ -69,24 +67,63 @@
                 $('#logout').hide();
             }
 
-
+            //결제하기
             function requestPay(){
-                IMP.request_pay({ // param
-                    pg: "uplus",
-                    pay_method: "card",
-                    merchant_uid: "ORD20180131-0000011",
-                    name: "노르웨이 회전 의자",
-                    amount: 64900,
-                    buyer_email: "gildong@gmail.com",
-                    buyer_name: "홍길동",
-                    buyer_tel: "010-4242-4242",
-                    buyer_addr: "서울특별시 강남구 신사동",
-                    buyer_postcode: "01181"
-                }, function (rsp) { // callback
-                    if (rsp.success) {
-                        
-                    } else {
-                        
+                //주문정보
+                var order = {
+                        "pid": "127210",
+                        "userid": "Facebook_405056993735406",
+                        "option": "네이비",
+                        "quantity": 1,
+                        "rc_name": "강인한",
+                        "rc_phone": "01030136027",
+                        "rc_post": "21547",
+                        "rc_address": "서울 금천구 남부순환로",
+                        "pay_amount": 12500
+                    };
+                
+                //주문생성
+                $.ajax({
+                    method: 'POST',
+                    url: "https://wg2ncsll71.execute-api.ap-northeast-2.amazonaws.com/beta/createorder",
+                    headers: {
+                        "Accept": "*/*"
+                    },
+                    data: JSON.stringify(order),
+                    contentType: 'application/json',
+                    success: function (result) {
+
+                        //결제요청
+                        IMP.request_pay({
+                            pg: "uplus",
+                            pay_method: "card",
+                            merchant_uid: result.oid,
+                            name: "노르웨이 회전 의자",
+                            amount: order.pay_amount,
+                            buyer_email: "",
+                            buyer_name: order.rc_name,
+                            buyer_tel: order.rc_phone,
+                            buyer_addr: order.rc_address,
+                            buyer_postcode: order.rc_post
+                        }, function (rsp) {
+                            if(!rsp.success){
+                                alert("결제 취소");
+                                return;
+                            }
+
+                            //결제성공
+                            //주문완료 요청
+
+
+
+
+
+
+
+                        });
+                    },
+                    error: function ajaxError(jqXHR, textStatus, errorThrown) {
+                        alert(JSON.stringify(jqXHR));
                     }
                 });
             }
