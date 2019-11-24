@@ -6,8 +6,15 @@
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="amazon-cognito-identity.min.js"></script>
     <script src="aws-sdk.min.js"></script>
+    <script src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"></script>
     
-    
+    <h3>상품정보</h3>
+    <button onclick="callPublicApi()">공개 api호출</button>
+
+
+    <br/>
+    <br/>
+    <h3>회원관리</h3>
     <div>
         <a id="login" href="https://phonecase.auth.ap-northeast-2.amazoncognito.com/login?response_type=token&client_id=gi18c058r50gup2clds7dk93q&redirect_uri=https://kanginhan.github.io/samplePage">로그인</a>
         <a id="logout" href="javascript:logout()">로그아웃</a>
@@ -30,9 +37,23 @@
         <input type="text" id="address"/>
     </div>
     <button onclick="userAttrSave()">속성 저장</button>
-    <button onclick="callPublicApi()">공개 api호출</button>
+    
+
+
+    <br/>
+    <br/>
+    <h3>주문</h3>
+
+
+
+
+    
+    <button onclick="requestPay()">결제 test</button>
 
     <script>
+            var IMP = window.IMP; // 생략해도 괜찮습니다.
+            IMP.init("imp83561466"); // "imp00000000" 대신 발급받은 "가맹점 식별코드"를 사용합니다.
+
             AWS.config.region = 'ap-northeast-2';
 
             var userInfo = null;
@@ -46,6 +67,28 @@
                 getUser();
             }else{
                 $('#logout').hide();
+            }
+
+
+            function requestPay(){
+                IMP.request_pay({ // param
+                    pg: "uplus",
+                    pay_method: "card",
+                    merchant_uid: "ORD20180131-0000011",
+                    name: "노르웨이 회전 의자",
+                    amount: 64900,
+                    buyer_email: "gildong@gmail.com",
+                    buyer_name: "홍길동",
+                    buyer_tel: "010-4242-4242",
+                    buyer_addr: "서울특별시 강남구 신사동",
+                    buyer_postcode: "01181"
+                }, function (rsp) { // callback
+                    if (rsp.success) {
+                        
+                    } else {
+                        
+                    }
+                });
             }
 
             //로그아웃
@@ -136,23 +179,12 @@
             function callPublicApi() {
                 $.ajax({
                     method: 'POST',
-                    url: "https://aaav0dws6a.execute-api.ap-northeast-2.amazonaws.com/beta/getlistprod",
+                    url: "https://wg2ncsll71.execute-api.ap-northeast-2.amazonaws.com/beta/getprodlist",
                     headers: {
-                        "Accept": "*/*",
-                        // Authorization: 'Bearer ' + idToken
+                        "Accept": "*/*"
                     },
                     data: JSON.stringify({
-                        "Category1": "케이스",
-                        "Category2": "다이어리",
-                        "Maker": "삼성",
-                        "Model": "SM-A805F",
-                        "Name": "모란카노 카노 다이어리",
-                        "Phone": "갤럭시A80",
-                        "Price": {
-                            "start": 0,
-                            "end": 99990
-                        },
-                        "Keyword": "갤럭"
+                        "pd_category": "케이스",
                     }),
                     contentType: 'application/json',
                     success: function (result) {
