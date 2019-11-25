@@ -88,12 +88,13 @@
                     };
                 
                 //주문생성
+                var authHeader = "Bearer " + accessToken;
                 $.ajax({
                     method: 'POST',
                     url: "https://wg2ncsll71.execute-api.ap-northeast-2.amazonaws.com/beta/createorder",
                     headers: {
                         "Accept": "*/*",
-                        "Authorization": "Bearer " + accessToken
+                        "Authorization": authHeader
                     },
                     data: JSON.stringify(order),
                     contentType: 'application/json',
