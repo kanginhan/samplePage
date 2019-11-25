@@ -88,13 +88,12 @@
                     };
                 
                 //주문생성
-                var authHeader = "Bearer " + accessToken;
                 $.ajax({
                     method: 'POST',
                     url: "https://wg2ncsll71.execute-api.ap-northeast-2.amazonaws.com/beta/createorder",
                     headers: {
                         "Accept": "*/*",
-                        "Authorization": authHeader
+                        "Authorization": "Bearer " + idToken
                     },
                     data: JSON.stringify(order),
                     contentType: 'application/json',
@@ -124,7 +123,8 @@
                                 method: 'POST',
                                 url: "https://wg2ncsll71.execute-api.ap-northeast-2.amazonaws.com/beta/completeorder",
                                 headers: {
-                                    "Accept": "*/*"
+                                    "Accept": "*/*",
+                                    "Authorization": "Bearer " + idToken
                                 },
                                 data: JSON.stringify({
                                     imp_uid: rsp.imp_uid,
@@ -191,6 +191,8 @@
                 provider.getUser(param, function (err, data) {
                     if(err){
                         //error
+                        localStorage.removeItem('access_token');
+                        localStorage.removeItem('id_token');
                         $('#logout').hide();
                     } else {
                         //success
