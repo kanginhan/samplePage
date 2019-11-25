@@ -192,6 +192,8 @@
                         //error
                         localStorage.removeItem('access_token');
                         localStorage.removeItem('id_token');
+                        access_token = null;
+                        id_token = null;                        
                         $('#logout').hide();
                     } else {
                         //success
