@@ -93,7 +93,7 @@
                     url: "https://wg2ncsll71.execute-api.ap-northeast-2.amazonaws.com/beta/createorder",
                     headers: {
                         "Accept": "*/*",
-                        "Authorization": "Bear " + accessToken
+                        "Authorization": "Bearer " + accessToken
                     },
                     data: JSON.stringify(order),
                     contentType: 'application/json',
