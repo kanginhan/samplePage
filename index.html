@@ -68,6 +68,15 @@
         <label>pay_success</label>
         <input type="checkbox" id="pay_success" disabled/>
     </div>
+    <div>
+        <label>allcasemall_oid</label>
+        <input type="text" id="allcasemall_oid"/>
+    </div>
+    <div>
+        <label>invoice_number</label>
+        <input type="text" id="invoice_number" disabled/>
+    </div>
+    <button onclick="saveOrder()">주문 저장</button>
 
 
     <script>
@@ -90,6 +99,42 @@
             }
 
 
+            //주문 저장
+            function saveOrder(){
+                if(!accessToken || !idToken){
+                    alert("로그인해주세요");
+                    return;
+                }
+
+                var oid = $('#oid').val();
+                if(!oid){
+                    alert("주문을 선택해 주세요");
+                    return;
+                }
+
+
+                $.ajax({
+                    method: 'POST',
+                    url: "https://wg2ncsll71.execute-api.ap-northeast-2.amazonaws.com/beta/updateOrder",
+                    headers: {
+                        "Accept": "*/*",
+                        "Authorization": "Bearer " + idToken
+                    },
+                    data: JSON.stringify({
+                        oid: oid,
+                        allcasemall_oid: $('#allcasemall_oid').val(),
+                        invoice_number: $('#invoice_number').val(),
+                    }),
+                    contentType: 'application/json',
+                    success: function (result) {
+                        alert("주문 저장 성공");
+                    },
+                    error: function ajaxError(jqXHR, textStatus, errorThrown) {
+                        alert(JSON.stringify(jqXHR));
+                    }
+                });
+            }
+            
 
             //주문 단건조회
             function getOrder(){
@@ -106,16 +151,16 @@
                         "Authorization": "Bearer " + idToken
                     },
                     data: JSON.stringify({
-                        oid: "ORD-405056993735406-1574651370043"
+                        oid: "ORD-405056993735406-1575115978875"
                     }),
                     contentType: 'application/json',
                     success: function (result) {
-                        alert(JSON.stringify(result));
-
                         $('#oid').val(result.oid);
-
-
-
+                        $('#pid').val(result.pid);
+                        $('#pay_amount').val(result.pay_amount);
+                        $('#pay_success').prop("checked", result.pay_success);
+                        $('#allcasemall_oid').val(result.allcasemall_oid);
+                        $('#invoice_number').val(result.invoice_number);
                     },
                     error: function ajaxError(jqXHR, textStatus, errorThrown) {
                         alert(JSON.stringify(jqXHR));
