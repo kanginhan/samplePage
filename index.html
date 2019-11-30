@@ -52,6 +52,22 @@
     <button onclick="getOrderList()">주문조회 test</button>
     <button onclick="getOrder()">주문 단건조회 test</button>
 
+    <div>
+        <label>oid</label>
+        <input type="text" id="oid" disabled/>
+    </div>
+    <div>
+        <label>pid</label>
+        <input type="text" id="pid" disabled/>
+    </div>
+    <div>
+        <label>pay_amount</label>
+        <input type="text" id="pay_amount" disabled/>
+    </div>
+    <div>
+        <label>pay_success</label>
+        <input type="checkbox" id="pay_success" disabled/>
+    </div>
 
 
     <script>
@@ -95,6 +111,11 @@
                     contentType: 'application/json',
                     success: function (result) {
                         alert(JSON.stringify(result));
+
+                        $('#oid').val(result.oid);
+
+
+
                     },
                     error: function ajaxError(jqXHR, textStatus, errorThrown) {
                         alert(JSON.stringify(jqXHR));
