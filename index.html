@@ -67,6 +67,37 @@
                 $('#logout').hide();
             }
 
+
+            //주문정보 조회
+            function getOrderList(){
+                if(!accessToken || !idToken){
+                    alert("로그인해주세요");
+                    return;
+                }
+
+                $.ajax({
+                    method: 'POST',
+                    url: "https://wg2ncsll71.execute-api.ap-northeast-2.amazonaws.com/beta/getorderlist",
+                    headers: {
+                        "Accept": "*/*",
+                        "Authorization": "Bearer " + idToken
+                    },
+                    data: JSON.stringify({
+                        imp_uid: rsp.imp_uid,
+                        oid: result.oid,
+                    }),
+                    contentType: 'application/json',
+                    success: function (result) {
+                        alert(JSON.stringify(result));
+                    },
+                    error: function ajaxError(jqXHR, textStatus, errorThrown) {
+                        alert(JSON.stringify(jqXHR));
+                    }
+                });
+            }
+
+
+
             //결제하기
             function requestPay(){
                 if(!accessToken || !idToken){
