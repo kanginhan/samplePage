@@ -38,6 +38,9 @@
         <input type="text" id="address"/>
     </div>
     <button onclick="userAttrSave()">속성 저장</button>
+    <br/>
+    <br/>
+    <button onclick="getOrderListForuser()">회원 주문내역 조회</button>
     
 
 
@@ -96,6 +99,34 @@
                 getUser();
             }else{
                 $('#logout').hide();
+            }
+
+
+            //회원 주문내역 조회
+            function getOrderList(){
+                if(!accessToken || !idToken){
+                    alert("로그인해주세요");
+                    return;
+                }
+
+                $.ajax({
+                    method: 'POST',
+                    url: "https://wg2ncsll71.execute-api.ap-northeast-2.amazonaws.com/beta/getorderlistforuser",
+                    headers: {
+                        "Accept": "*/*",
+                        "Authorization": "Bearer " + idToken
+                    },
+                    data: JSON.stringify({
+                        
+                    }),
+                    contentType: 'application/json',
+                    success: function (result) {
+                        alert(JSON.stringify(result));
+                    },
+                    error: function ajaxError(jqXHR, textStatus, errorThrown) {
+                        alert(JSON.stringify(jqXHR));
+                    }
+                });
             }
 
 
