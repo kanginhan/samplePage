@@ -40,7 +40,7 @@
     <button onclick="userAttrSave()">속성 저장</button>
     <br/>
     <br/>
-    <button onclick="getOrderListForuser()">회원 주문내역 조회</button>
+    <button onclick="getOrderListForUser()">회원 주문내역 조회</button>
     
 
 
@@ -103,7 +103,7 @@
 
 
             //회원 주문내역 조회
-            function getOrderList(){
+            function getOrderListForUser(){
                 if(!accessToken || !idToken){
                     alert("로그인해주세요");
                     return;
