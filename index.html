@@ -88,8 +88,10 @@
                         "Authorization": "Bearer " + idToken
                     },
                     data: JSON.stringify({
-                        imp_uid: rsp.imp_uid,
-                        oid: result.oid,
+                        paid_at: {
+                            start: 1574601652,
+                            end: 1574643652
+                        }
                     }),
                     contentType: 'application/json',
                     success: function (result) {
