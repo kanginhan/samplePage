@@ -50,6 +50,7 @@
     <br/>
     <h3>Admin</h3>
     <button onclick="getOrderList()">주문조회 test</button>
+    <button onclick="getOrder()">주문 단건조회 test</button>
 
 
 
@@ -70,6 +71,35 @@
                 getUser();
             }else{
                 $('#logout').hide();
+            }
+
+
+
+            //주문 단건조회
+            function getOrder(){
+                if(!accessToken || !idToken){
+                    alert("로그인해주세요");
+                    return;
+                }
+
+                $.ajax({
+                    method: 'POST',
+                    url: "https://wg2ncsll71.execute-api.ap-northeast-2.amazonaws.com/beta/getorder",
+                    headers: {
+                        "Accept": "*/*",
+                        "Authorization": "Bearer " + idToken
+                    },
+                    data: JSON.stringify({
+                        oid: "ORD-405056993735406-1574651370043"
+                    }),
+                    contentType: 'application/json',
+                    success: function (result) {
+                        alert(JSON.stringify(result));
+                    },
+                    error: function ajaxError(jqXHR, textStatus, errorThrown) {
+                        alert(JSON.stringify(jqXHR));
+                    }
+                });
             }
 
 
