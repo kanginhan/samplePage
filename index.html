@@ -74,7 +74,7 @@
     </div>
     <div>
         <label>invoice_number</label>
-        <input type="text" id="invoice_number" disabled/>
+        <input type="text" id="invoice_number"/>
     </div>
     <button onclick="saveOrder()">주문 저장</button>
 
@@ -122,8 +122,8 @@
                     },
                     data: JSON.stringify({
                         oid: oid,
-                        allcasemall_oid: $('#allcasemall_oid').val(),
-                        invoice_number: $('#invoice_number').val(),
+                        allcasemall_oid: $('#allcasemall_oid').val() || null,
+                        invoice_number: $('#invoice_number').val() || null,
                     }),
                     contentType: 'application/json',
                     success: function (result) {
@@ -134,7 +134,7 @@
                     }
                 });
             }
-            
+
 
             //주문 단건조회
             function getOrder(){
